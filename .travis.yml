@@ -3,14 +3,13 @@ sudo: true
 dist: trusty
 language: ruby
 cache: bundler
-before_install:
+install: 
   - wget https://apt.puppetlabs.com/puppetlabs-release-pc1-trusty.deb
   - sudo dpkg -i puppetlabs-release-pc1-trusty.deb
   - sudo apt-get update
   - sudo apt-get install pdk
 script:
   - 'pdk $CHECK'
-bundler_args: --without system_tests
 rvm:
   - 2.1.9
 env:
