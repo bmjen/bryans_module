@@ -1,24 +1,38 @@
 ---
-sudo: true
+sudo: false
 dist: trusty
 language: ruby
 cache: bundler
-install:
-  - wget https://apt.puppetlabs.com/puppetlabs-release-pc1-trusty.deb
-  - sudo dpkg -i puppetlabs-release-pc1-trusty.deb
-  - sudo apt-get update
-  - sudo apt-get install pdk
+before_install:
+  - bundle -v
+  - rm -f Gemfile.lock
+  - gem update --system
+  - gem update bundler
+  - gem --version
+  - bundle -v
 script:
-  - 'pdk $CHECK'
+  - 'bundle exec rake $CHECK'
+bundler_args: --without system_tests
 rvm:
-  - 2.4.3
+  - 2.4.1
+env:
+  - PUPPET_GEM_VERSION="~> 5.0" CHECK=spec
 matrix:
   fast_finish: true
   include:
     -
-      env: CHECK="validate --debug"
+      env: CHECK=rubocop
     -
-      env: CHECK="test unit --debug"
+      env: CHECK="syntax lint"
+    -
+      env: CHECK=metadata_lint
+    -
+      env: CHECK=release_checks
+    -
+      env: CHECK=parallel_spec
+    -
+      env: PUPPET_GEM_VERSION="~> 4.0" CHECK=parallel_spec
+      rvm: 2.1.9
 branches:
   only:
     - master
